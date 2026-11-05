@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>DC Crypto Miner 360</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#141f31;--muted:#9aabc2;--line:#26364d;--green:#40d6a0;--gold:#f5c66a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#1a3550 0,transparent 38%),var(--bg);color:#f3f7fc;font:16px system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:900px;margin:auto;padding:26px 16px 60px}.brand{color:var(--green);font-weight:800;letter-spacing:.12em;font-size:12px}
+h1{font-size:clamp(28px,6vw,44px);margin:8px 0}p{color:var(--muted);line-height:1.55}.tag{display:inline-block;border:1px solid #356b5b;color:var(--green);padding:5px 10px;border-radius:20px;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:22px 0}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+.label{color:var(--muted);font-size:13px}.value{font-size:28px;font-weight:750;margin-top:8px}
+h2{font-size:19px;margin:0 0 12px}.notice{border-left:3px solid var(--gold);padding:12px 14px;background:#2b271c;border-radius:8px;color:#f7dfad;margin:18px 0}
+input,button{font:inherit;border-radius:10px;padding:12px;border:1px solid var(--line)}input{background:#0d1726;color:white;width:100%;margin:6px 0 12px}button{background:var(--green);color:#07150f;font-weight:750;border:0;cursor:pointer;width:100%}
+.small{font-size:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.history{white-space:pre-wrap;color:var(--muted);font-size:14px}
+footer{margin-top:26px;color:var(--muted);font-size:12px}
+</style></head>
+<body><main>
+<div class="brand">DC MODAS PRESENTA · PROYECTO INDEPENDIENTE</div>
+<h1>DC Crypto Miner 360</h1><span class="tag">Panel de seguimiento · versión inicial</span>
+<p>Un lugar para controlar oportunidades, costes y ganancias reales relacionadas con criptoactivos, sin promesas de rentabilidad.</p>
+<div class="notice"><b>Importante:</b> USDT no se mina directamente. Esta web todavía no mina criptomonedas ni envía fondos a Binance. Desconfía de servicios que prometen ganancias garantizadas.</div>
+<div class="grid">
+<section class="card"><div class="label">Ingresos registrados</div><div class="value" id="income">0.00 USDT</div></section>
+<section class="card"><div class="label">Costes registrados</div><div class="value" id="costs">0.00 USDT</div></section>
+<section class="card"><div class="label">Balance neto registrado</div><div class="value" id="net">0.00 USDT</div></section>
+</div>
+<section class="card">
+<h2>Registrar un movimiento</h2>
+<label class="label" for="kind">Tipo de movimiento</label><select id="kind" style="width:100%;padding:12px;background:#0d1726;color:white;border:1px solid var(--line);border-radius:10px"><option value="income">Ingreso confirmado</option><option value="cost">Coste o comisión</option></select>
+<label class="label" for="amount">Importe en USDT</label><input id="amount" type="number" min="0.000001" step="0.000001" placeholder="Ej. 1.25">
+<label class="label" for="note">Detalle / origen</label><input id="note" maxlength="100" placeholder="Ej. recompensa recibida">
+<button id="save">Guardar movimiento</button><p class="small">Los registros quedan guardados en este navegador, en este dispositivo. No se verifica automáticamente que un pago haya llegado.</p>
+</section>
+<section class="card" style="margin-top:14px"><h2>Historial</h2><div id="history" class="history">Todavía no hay movimientos registrados.</div><button id="clear" style="margin-top:14px;background:#35465d;color:white">Borrar historial local</button></section>
+<section class="card" style="margin-top:14px"><h2>Próximo paso</h2><p>Primero verificaremos fuentes legítimas y calcularemos si alguna oportunidad puede dejar beneficio después de comisiones y costes. No conectes tu Binance ni compartas claves para esta demo.</p></section>
+<footer>DC Crypto Miner 360 · Herramienta informativa. No es asesoramiento financiero ni un servicio de minería.</footer>
+</main>
+<script>
+const KEY='dc-crypto-miner-360-records';
+const $=id=>document.getElementById(id);
+function records(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []}}
+function render(){const a=records();const inc=a.filter(x=>x.kind==='income').reduce((s,x)=>s+x.amount,0);const cost=a.filter(x=>x.kind==='cost').reduce((s,x)=>s+x.amount,0);$('income').textContent=inc.toFixed(2)+' USDT';$('costs').textContent=cost.toFixed(2)+' USDT';$('net').textContent=(inc-cost).toFixed(2)+' USDT';$('history').textContent=a.length?a.slice().reverse().map(x=>new Date(x.date).toLocaleString('es-UY')+' · '+(x.kind==='income'?'Ingreso +':'Coste −')+x.amount.toFixed(6)+' USDT · '+x.note).join('\n'):'Todavía no hay movimientos registrados.'}
+$('save').onclick=()=>{const amount=Number($('amount').value);if(!Number.isFinite(amount)||amount<=0){alert('Ingresa un importe válido.');return}const a=records();a.push({kind:$('kind').value,amount,note:$('note').value.trim()||'Sin detalle',date:new Date().toISOString()});localStorage.setItem(KEY,JSON.stringify(a));$('amount').value='';$('note').value='';render()};
+$('clear').onclick=()=>{if(confirm('¿Borrar todos los movimientos guardados en este navegador?')){localStorage.removeItem(KEY);render()}};render();
+</script></body></html>
